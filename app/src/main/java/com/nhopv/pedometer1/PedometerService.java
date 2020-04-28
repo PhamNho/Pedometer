@@ -10,6 +10,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -23,6 +24,7 @@ public class PedometerService extends Service implements SensorEventListener {
     int currentSteps;
     private double height;
     private double weight;
+    private Float totalSteps;
 
     @Override
     public void onCreate() {
@@ -65,7 +67,7 @@ public class PedometerService extends Service implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (isRunning) {
-            Float totalSteps = event.values[0];
+            totalSteps = event.values[0];
             currentSteps = (int) (totalSteps - previousTotalSteps);
 
             double averageSpeed = 0.0008; // km/bước
@@ -80,18 +82,19 @@ public class PedometerService extends Service implements SensorEventListener {
             broadcastIntent.putExtra("km", kmReach);
             broadcastIntent.putExtra("totalSteps", totalSteps);
             sendBroadcast(broadcastIntent);
+            saveDate();
         }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     private void saveDate() {
         SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putFloat("key1", previousTotalSteps);
+        editor.putFloat("key1", totalSteps);
         editor.apply();
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     private void loadData() {

@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvKilometers;
     private Float totalSteps = 0f;
     private Float previousTotalSteps = 0f;
-    private int steps;
+    private int steps, target;
     private double calo, km;
 
     public static final String mBroadcastAction = "STRING_BROADCAST_ACTION";
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-//        resetSteps();
-//        loadData();
+        loadData();
+        resetSteps();
     }
 
     @Override
@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
         String mHeight = edtHeight.getText().toString().trim();
         String mWeight = edtWeight.getText().toString().trim();
         String mTarget = edtTarget.getText().toString().trim();
-
         if (mHeight.isEmpty()) {
             edtHeight.setError("Bạn chưa nhập chiều cao (cm)");
         } else if (mWeight.isEmpty()) {
@@ -106,48 +105,52 @@ public class MainActivity extends AppCompatActivity {
         } else if (mTarget.isEmpty()) {
             edtTarget.setError("Bạn chưa nhập mục tiêu (bước)");
         } else {
+            target = Integer.parseInt(mTarget);
             tvProgress.setText("/" + mTarget);
             circularProgressBar.setProgressMax(Float.parseFloat(mTarget));
             Intent intent = new Intent(MainActivity.this, PedometerService.class);
             intent.putExtra("height", Double.parseDouble(mHeight));
             intent.putExtra("weight", Double.parseDouble(mWeight));
+            intent.putExtra("target", Integer.parseInt(mTarget));
             startService(intent);
         }
     }
 
-//    void resetSteps() {
-//        tvSteps.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "Giữ để làm mới", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        tvSteps.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                previousTotalSteps = totalSteps;
-//                tvSteps.setText(String.valueOf(0));
-//                tvCalories.setText(String.valueOf(0));
-//                tvKilometers.setText(String.valueOf(0));
-//                circularProgressBar.setProgressWithAnimation(0);
-//                saveDate();
-//                Toast.makeText(MainActivity.this, "Đã làm mới", Toast.LENGTH_SHORT).show();
-//                return false;
-//            }
-//        });
-//    }
+    void resetSteps() {
+        tvSteps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Giữ để làm mới", Toast.LENGTH_SHORT).show();
+            }
+        });
+        tvSteps.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                previousTotalSteps = totalSteps;
+                tvSteps.setText(String.valueOf(0));
+                tvCalories.setText(String.valueOf(0));
+                tvKilometers.setText(String.valueOf(0));
+                circularProgressBar.setProgressWithAnimation(0);
+                saveDate();
+                return false;
+            }
+        });
+    }
 
-//    private void saveDate() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putFloat("key1", previousTotalSteps);
-//        editor.apply();
-//    }
+    private void saveDate() {
+        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putFloat("key1", totalSteps);
+        editor.apply();
+    }
 
-//    private void loadData() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-//        Float saveNumber = sharedPreferences.getFloat("key1", 0f);
-//        Log.d(TAG, String.valueOf(saveNumber));
-//        previousTotalSteps = saveNumber;
-//    }
+    private void loadData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        Float saveNumber = sharedPreferences.getFloat("key1", 0f);
+        int saveProgress = sharedPreferences.getInt("saveProgress", 0);
+        Log.d(TAG, String.valueOf(saveNumber));
+        Log.d(TAG, "target: " + saveProgress);
+        previousTotalSteps = saveNumber;
+        tvProgress.setText("/" + saveProgress);
+    }
 }
