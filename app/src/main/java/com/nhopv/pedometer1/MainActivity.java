@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
         tvProgress = findViewById(R.id.tvProgress);
         tvCalories = findViewById(R.id.tvCalories);
         tvKilometers = findViewById(R.id.tvKilometers);
-        mIntentFilter = new IntentFilter(mBroadcastAction);
-
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(mBroadcastAction);
     }
 
     @SuppressLint("SetTextI18n")
@@ -107,10 +107,10 @@ public class MainActivity extends AppCompatActivity {
             edtTarget.setError("Bạn chưa nhập mục tiêu (bước)");
         } else {
             tvProgress.setText("/" + mTarget);
+            circularProgressBar.setProgressMax(Float.parseFloat(mTarget));
             Intent intent = new Intent(MainActivity.this, PedometerService.class);
             intent.putExtra("height", Double.parseDouble(mHeight));
             intent.putExtra("weight", Double.parseDouble(mWeight));
-            mIntentFilter.addAction(mBroadcastAction);
             startService(intent);
         }
     }

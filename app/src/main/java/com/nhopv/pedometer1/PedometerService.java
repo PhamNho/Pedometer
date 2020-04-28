@@ -14,9 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class PedometerService extends Service implements SensorEventListener {
     private static final String TAG = "AAA";
     SensorManager sensorManager;
