@@ -1,4 +1,4 @@
-package com.nhopv.pedometer1;
+package com.nhopv.pedometer;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat("key1", totalSteps);
+        editor.putFloat("target", target);
         editor.apply();
     }
 

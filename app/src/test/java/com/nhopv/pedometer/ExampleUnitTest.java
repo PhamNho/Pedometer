@@ -1,4 +1,4 @@
-package com.nhopv.pedometer1;
+package com.nhopv.pedometer;
 
 import org.junit.Test;
 

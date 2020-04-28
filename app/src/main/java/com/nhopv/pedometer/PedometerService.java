@@ -1,4 +1,4 @@
-package com.nhopv.pedometer1;
+package com.nhopv.pedometer;
 
 import android.app.Service;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -69,7 +68,6 @@ public class PedometerService extends Service implements SensorEventListener {
         if (isRunning) {
             totalSteps = event.values[0];
             currentSteps = (int) (totalSteps - previousTotalSteps);
-
             double averageSpeed = 0.0008; // km/bước
             double calorieConsumption = Math.ceil(currentSteps * CountCaloriesFor1Step() * 100) / 100;
             double kmReach = Math.ceil(currentSteps * averageSpeed * 100) / 100;
