@@ -42,6 +42,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         loadData();
+        Intent intent = new Intent(MainActivity.this, PedometerService.class);
+        tvProgress.setText("/" + 3000);
+        circularProgressBar.setProgressMax(3000f);
+        intent.putExtra("height", 170.0);
+        intent.putExtra("weight", 70.0);
+        intent.putExtra("target", 3000);
+        startService(intent);
     }
 
     @Override
@@ -102,26 +109,26 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, PedometerService.class);
         switch (view.getId()) {
             case R.id.btnStart:
-                String mHeight = edtHeight.getText().toString().trim();
-                String mWeight = edtWeight.getText().toString().trim();
-                String mTarget = edtTarget.getText().toString().trim();
-                if (mHeight.isEmpty()) {
-                    edtHeight.setError(getText(R.string.notify_height_empty));
-                } else if (Integer.parseInt(mHeight) > 300) {
-                    edtHeight.setError(getText(R.string.notify_height_smaller_300cm));
-                } else if (mWeight.isEmpty()) {
-                    edtWeight.setError("Bạn chưa nhập cân nặng (kg)");
-                } else if (mTarget.isEmpty()) {
-                    edtTarget.setError("Bạn chưa nhập mục tiêu (bước)");
-                } else {
-                    target = Integer.parseInt(mTarget);
-                    tvProgress.setText("/" + mTarget);
-                    circularProgressBar.setProgressMax(Float.parseFloat(mTarget));
-                    intent.putExtra("height", Double.parseDouble(mHeight));
-                    intent.putExtra("weight", Double.parseDouble(mWeight));
-                    intent.putExtra("target", target);
-                    startService(intent);
-                }
+//                String mHeight = edtHeight.getText().toString().trim();
+//                String mWeight = edtWeight.getText().toString().trim();
+//                String mTarget = edtTarget.getText().toString().trim();
+//                if (mHeight.isEmpty()) {
+//                    edtHeight.setError(getText(R.string.notify_height_empty));
+//                } else if (Integer.parseInt(mHeight) > 300) {
+//                    edtHeight.setError(getText(R.string.notify_height_smaller_300cm));
+//                } else if (mWeight.isEmpty()) {
+//                    edtWeight.setError("Bạn chưa nhập cân nặng (kg)");
+//                } else if (mTarget.isEmpty()) {
+//                    edtTarget.setError("Bạn chưa nhập mục tiêu (bước)");
+//                } else {
+//                    target = Integer.parseInt(mTarget);
+//                    tvProgress.setText("/" + mTarget);
+//                    circularProgressBar.setProgressMax(Float.parseFloat(mTarget));
+//                    intent.putExtra("height", Double.parseDouble(mHeight));
+//                    intent.putExtra("weight", Double.parseDouble(mWeight));
+//                    intent.putExtra("target", target);
+//                    startService(intent);
+//                }
                 break;
             case R.id.btnStop:
                 stopService(intent);
@@ -132,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 tvSteps.setText(String.valueOf(0));
                 circularProgressBar.setProgressMax(0);
                 circularProgressBar.setProgressWithAnimation(0);
+                resetData();
                 Toast.makeText(this, "Kết thúc Service", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -153,6 +161,16 @@ public class MainActivity extends AppCompatActivity {
         circularProgressBar.setProgress(currentSteps);
         circularProgressBar.setProgressMax((float) target);
     }
+    private void resetData() {
+        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("target", target);
+        editor.putInt("currentSteps", 0);
+        editor.putString("calorie", String.valueOf(0));
+        editor.putString("kmReach", String.valueOf(0));
+        editor.apply();
+    }
+
 
     private void checkProgress(int steps, int target) {
         if (steps == target) {

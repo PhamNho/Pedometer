@@ -102,7 +102,7 @@ public class PedometerService extends Service implements SensorEventListener {
             broadcastIntent.putExtra("km", kmReach);
             broadcastIntent.putExtra("target", target);
             sendBroadcast(broadcastIntent);
-            saveDate();
+            saveData();
         }
     }
 
@@ -110,7 +110,7 @@ public class PedometerService extends Service implements SensorEventListener {
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    private void saveDate() {
+    private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat("key1", totalSteps);
