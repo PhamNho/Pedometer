@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastAction)) {
-                Log.d(TAG, "steps: " + steps + "\n" + "calo :" + calo + "\n" + "km: " + km);
+                Log.d(TAG, "\nsteps: " + steps + "\n" + "calo :" + calo + "\n" + "km: " + km);
                 steps = intent.getIntExtra("steps", 0);
                 calo = intent.getDoubleExtra("calo", 0);
                 km = intent.getDoubleExtra("km", 0);
@@ -132,9 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 circularProgressBar.setProgressMax(0);
                 circularProgressBar.setProgressWithAnimation(0);
                 // clear Form
-                edtHeight.setText("");
-                edtWeight.setText("");
-                edtTarget.setText("");
+                Toast.makeText(this, "Kết thúc Service", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

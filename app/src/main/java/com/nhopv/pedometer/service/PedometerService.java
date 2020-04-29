@@ -1,5 +1,7 @@
 package com.nhopv.pedometer.service;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +15,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
+import com.nhopv.pedometer.R;
 import com.nhopv.pedometer.activity.MainActivity;
+
+import static com.nhopv.pedometer.activity.App.CHANNEL_ID;
 
 public class PedometerService extends Service implements SensorEventListener {
     private static final String TAG = "AAA";
@@ -48,6 +54,16 @@ public class PedometerService extends Service implements SensorEventListener {
         height = intent.getDoubleExtra("height", 0);
         weight = intent.getDoubleExtra("weight", 0);
         target = intent.getIntExtra("target", 0);
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Đang đếm bước chân")
+                .setContentText("Test")
+                .setSmallIcon(R.drawable.ic_logo)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1, notification);
         //flag này có tác dụng khi android bị kill hoặc bộ nhớ thấp, hệ thống sẽ start lại và gửi kết quả lần nữa.
         return START_REDELIVER_INTENT;
     }
