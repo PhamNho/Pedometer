@@ -20,7 +20,7 @@ import androidx.core.app.NotificationCompat;
 import com.nhopv.pedometer.R;
 import com.nhopv.pedometer.activity.MainActivity;
 
-import static com.nhopv.pedometer.activity.App.CHANNEL_ID;
+import static com.nhopv.pedometer.notify.App.CHANNEL_ID;
 
 public class PedometerService extends Service implements SensorEventListener {
     private static final String TAG = "AAA";
@@ -31,8 +31,10 @@ public class PedometerService extends Service implements SensorEventListener {
     int currentSteps;
     private double height;
     private double weight;
-    private Float totalSteps;
+    private Float totalSteps = 0f;
     private int target;
+    double calorieConsumption;
+    double kmReach;
 
     @Override
     public void onCreate() {
@@ -77,20 +79,21 @@ public class PedometerService extends Service implements SensorEventListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        saveDate();
-        Log.d(TAG, "onDestroy()");
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (isRunning) {
-            totalSteps = event.values[0];
+            if (previousTotalSteps == 0f) {
+                previousTotalSteps = event.values[0];
+            } else {
+                totalSteps = event.values[0];
+            }
             currentSteps = (int) (totalSteps - previousTotalSteps);
-
             double averageSpeed = 0.0008; // km/bước
-            double calorieConsumption = Math.ceil(currentSteps * CountCaloriesFor1Step() * 100) / 100;
-            double kmReach = Math.ceil(currentSteps * averageSpeed * 100) / 100;
-            Log.d(TAG, "onSensorChanged: Steps = " + currentSteps + "\ntotalSteps: " + totalSteps + "\npreviousTotalSteps: " + previousTotalSteps);
+            calorieConsumption = Math.ceil(currentSteps * CountCaloriesFor1Step() * 100) / 100;
+            kmReach = Math.ceil(currentSteps * averageSpeed * 100) / 100;
+            Log.d(TAG, "onSensorChanged: Steps = " + currentSteps + "--totalSteps: " + totalSteps + "--previousTotalSteps: " + previousTotalSteps);
 
             Intent broadcastIntent = new Intent();
             broadcastIntent.setAction(MainActivity.mBroadcastAction);
@@ -99,7 +102,7 @@ public class PedometerService extends Service implements SensorEventListener {
             broadcastIntent.putExtra("km", kmReach);
             broadcastIntent.putExtra("target", target);
             sendBroadcast(broadcastIntent);
-            loadData();
+            saveDate();
         }
     }
 
@@ -112,6 +115,9 @@ public class PedometerService extends Service implements SensorEventListener {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putFloat("key1", totalSteps);
         editor.putInt("target", target);
+        editor.putInt("currentSteps", currentSteps);
+        editor.putString("calorie", String.valueOf(calorieConsumption));
+        editor.putString("kmReach", String.valueOf(kmReach));
         editor.apply();
     }
 

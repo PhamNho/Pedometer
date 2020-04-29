@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pedometer Test</string>
+    <string name="notify_height_empty">Bạn chưa nhập chiều cao(cm)</string>
+    <string name="notify_height_smaller_300cm">Chiều cao bé hơn 300(cm)</string>
 </resources>

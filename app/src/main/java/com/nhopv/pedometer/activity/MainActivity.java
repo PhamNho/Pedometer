@@ -77,10 +77,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Tạo một BroadcastReceiver lắng nghe service
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @SuppressLint("SetTextI18n")
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(mBroadcastAction)) {
-                Log.d(TAG, "\nsteps: " + steps + "\n" + "calo :" + calo + "\n" + "km: " + km);
+                Log.d(TAG, "steps: " + steps + "--calo :" + calo + "--km: " + km);
                 steps = intent.getIntExtra("steps", 0);
                 calo = intent.getDoubleExtra("calo", 0);
                 km = intent.getDoubleExtra("km", 0);
@@ -105,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 String mWeight = edtWeight.getText().toString().trim();
                 String mTarget = edtTarget.getText().toString().trim();
                 if (mHeight.isEmpty()) {
-                    edtHeight.setError("Bạn chưa nhập chiều cao (cm)");
+                    edtHeight.setError(getText(R.string.notify_height_empty));
                 } else if (Integer.parseInt(mHeight) > 300) {
-                    edtHeight.setError("Chiều cao bé hơn 300(cm)");
+                    edtHeight.setError(getText(R.string.notify_height_smaller_300cm));
                 } else if (mWeight.isEmpty()) {
                     edtWeight.setError("Bạn chưa nhập cân nặng (kg)");
                 } else if (mTarget.isEmpty()) {
@@ -131,47 +132,25 @@ public class MainActivity extends AppCompatActivity {
                 tvSteps.setText(String.valueOf(0));
                 circularProgressBar.setProgressMax(0);
                 circularProgressBar.setProgressWithAnimation(0);
-                // clear Form
                 Toast.makeText(this, "Kết thúc Service", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
 
-//    void resetSteps() {
-//        tvSteps.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(MainActivity.this, "Giữ để làm mới", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        tvSteps.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                previousTotalSteps = totalSteps;
-//                tvSteps.setText(String.valueOf(0));
-//                tvCalories.setText(String.valueOf(0));
-//                tvKilometers.setText(String.valueOf(0));
-//                circularProgressBar.setProgressWithAnimation(0);
-//                saveDate();
-//                return false;
-//            }
-//        });
-//    }
-//
-//    private void saveDate() {
-//        SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putFloat("key1", totalSteps);
-//        editor.putFloat("target", target);
-//        editor.apply();
-//    }
-
     @SuppressLint("SetTextI18n")
     private void loadData() {
         SharedPreferences sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
         int target = sharedPreferences.getInt("target", 0);
+        int currentSteps = sharedPreferences.getInt("currentSteps", 0);
+        String calorie = sharedPreferences.getString("calorie", "0");
+        String kmReach = sharedPreferences.getString("kmReach", "0");
+
         Log.d(TAG, "target: " + target);
         tvProgress.setText("/" + target);
+        tvKilometers.setText(kmReach);
+        tvCalories.setText(calorie);
+        tvSteps.setText(currentSteps + "");
+        circularProgressBar.setProgress(currentSteps);
         circularProgressBar.setProgressMax((float) target);
     }
 

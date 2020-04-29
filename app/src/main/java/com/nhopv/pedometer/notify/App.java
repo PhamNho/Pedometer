@@ -1,4 +1,4 @@
-package com.nhopv.pedometer.activity;
+package com.nhopv.pedometer.notify;
 
 import android.app.Application;
 import android.app.NotificationChannel;
